@@ -1,0 +1,46 @@
+apply plugin: 'java'
+
+project.ext {
+    cucumberVersion = '5.6.0'
+}
+buildscript {
+    repositories {
+        flatDir dirs: 'lib'
+    }
+    dependencies {
+        classpath ':proguard'
+    }
+}
+dependencies {
+    testImplementation 'io.cucumber:cucumber-java:' + cucumberVersion
+    testImplementation 'io.cucumber:cucumber-junit:' + cucumberVersion
+    compile group: 'io.cucumber', name: 'cucumber-jvm', version: '5.6.0', ext: 'pom'
+    compile group: 'net.sf.proguard', name: 'proguard', version: '4.4'
+
+
+}
+configurations {
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
+}
+
+task cucumber() {
+    dependsOn assemble, compileTestJava
+    doLast {
+        javaexec {
+            main = "io.cucumber.core.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+            args = [
+                    '--plugin','io.cucumber.skeleton.CustomTestListener:./build/cucumber/report',
+                    //'--plugin', 'timeline:rpt',
+                    '--glue', 'io.cucumber.skeleton', 'src/test/resources',
+                    '--threads','20'
+            ]
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
