@@ -84,27 +84,6 @@ private CloseableHttpClient initializeHttpClient(){
             httpPut.addHeader(key,value);
         }
     }
-    /**
-     * To format get url with parameters
-     * @param
-     * @return
-     * @throws URISyntaxException
-     */
-//    private URI formatGetUrl(RestRequest request) throws URISyntaxException
-//    {
-//        URIBuilder builder = new URIBuilder();
-//        //builder.setScheme("http").setHost("www.google.com").setPath("/search");
-//
-//        for (String key : request.getHeaders().keySet())
-//        {
-//            String value= request.getHeaders().get(key);
-//            builder.setParameter(key, value);
-//        }
-//
-//        URI uri = builder.build();
-//
-//        return uri;
-//    }
 
     private void addContentType(HttpPost httpPost,DataFormat dataFormat) throws ExecutionControl.NotImplementedException {
         switch (dataFormat)
@@ -117,7 +96,6 @@ private CloseableHttpClient initializeHttpClient(){
                 break;
         }
 
-
     }
 
     /**
@@ -126,13 +104,14 @@ private CloseableHttpClient initializeHttpClient(){
      * @return
      * @throws Exception
      */
-    public RestResponse invokePut(RestRequest request) throws Exception {
+    public RestResponse put(RestRequest request) throws Exception {
         RestResponse restResponse = new RestResponse();
         HttpPut httpPut = new HttpPut(new URI(concatenatePath(this.baseUrl,request.resource)));
         addHeaderForPut(request,httpPut);
         StringEntity entity = new StringEntity(request.getBody());
         httpPut.setEntity(entity);
         CloseableHttpResponse response = getClient().execute(httpPut);
+        checkResponseCode(response);
 
         String content = EntityUtils.toString(response.getEntity());
 
@@ -153,7 +132,7 @@ private CloseableHttpClient initializeHttpClient(){
      * @return
      * @throws Exception
      */
-    public RestRequest invokePost(RestRequest request) throws Exception {
+    public RestRequest post(RestRequest request) throws Exception {
 
         RestResponse restResponse = new RestResponse();
         /*initialize POST client*/
@@ -166,6 +145,7 @@ private CloseableHttpClient initializeHttpClient(){
 
         /*Execute post*/
         CloseableHttpResponse response = getClient().execute(httpPost);
+        checkResponseCode(response);
         String responceContent = EntityUtils.toString(response.getEntity());
 
         /*Construct RestResponse*/
@@ -184,7 +164,7 @@ private CloseableHttpClient initializeHttpClient(){
      * @return RestResponse
      * @throws Exception
      */
-    public RestResponse invokeGet(RestRequest request) throws Exception {
+    public RestResponse get(RestRequest request) throws Exception {
 
         HttpGet httpGet = new HttpGet(new URI(concatenatePath(this.baseUrl,request.resource)));
 
@@ -200,19 +180,24 @@ private CloseableHttpClient initializeHttpClient(){
         /* process response */
         int statusCode= httpResponse.getStatusLine().getStatusCode();
 
-        /*Construct RestResponse*/
-        if (statusCode == 200) {
-            responseText = EntityUtils.toString(httpEntity);
-            restResponse.setContent(responseText);
-        } else {
-            throw new Exception("Invalid HTTP response: " + httpResponse.getStatusLine().getStatusCode());
-        }
+        checkResponseCode(httpResponse);
 
+        /*Construct rest response*/
+        responseText = EntityUtils.toString(httpEntity);
+        restResponse.setContent(responseText);
         restResponse.setStatusCode(statusCode);
         restResponse.setHeaders(httpResponse.getAllHeaders());
 
         return  restResponse;
 }
+
+    private void checkResponseCode(CloseableHttpResponse response) throws Exception {
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode != 200) {
+            throw new Exception("Invalid HTTP response: " + statusCode);
+        }
+    }
+
 
     /**
      * Concatenate string paths
@@ -258,7 +243,7 @@ private CloseableHttpClient initializeHttpClient(){
         request.headers.put("version","2.0");
 
         RestResponse restResponse = new RestClient("https://localhost:44353/api")
-                .invokeGet(request);
+                .get(request);
         for (Header header: restResponse.getHeaders()) {
             System.out.println(header.getName() );
             System.out.println(header.getValue() );
