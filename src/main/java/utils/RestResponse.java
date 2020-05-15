@@ -1,6 +1,7 @@
 package utils;
 
 import org.apache.http.Header;
+import org.apache.http.ProtocolVersion;
 import org.apache.http.client.methods.CloseableHttpResponse;
 
 import java.util.HashMap;
@@ -8,6 +9,16 @@ import java.util.HashMap;
 public class RestResponse
 {
     private String content;
+
+    public ProtocolVersion getProtocolVersion() {
+        return protocolVersion;
+    }
+
+    public void setProtocolVersion(ProtocolVersion protocolVersion) {
+        this.protocolVersion = protocolVersion;
+    }
+
+    private ProtocolVersion protocolVersion;
 
     public CloseableHttpResponse getCloseableHttpResponse() {
         return closeableHttpResponse;

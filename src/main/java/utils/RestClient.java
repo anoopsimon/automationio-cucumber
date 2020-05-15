@@ -16,8 +16,8 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
 
+import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -32,6 +32,12 @@ public RestClient(String baseUrl)
     this.baseUrl=baseUrl;
     this.client = initializeHttpClient();
 }
+
+    public RestClient()
+    {
+        this.client = initializeHttpClient();
+        this.baseUrl="";
+    }
 
 private CloseableHttpClient initializeHttpClient(){
     try {
@@ -98,6 +104,26 @@ private CloseableHttpClient initializeHttpClient(){
 
     }
 
+
+    /**
+     * To Generate the Rest Response object
+     * @param response
+     * @return
+     * @throws IOException
+     */
+    private RestResponse generateRestResponse(CloseableHttpResponse response) throws IOException {
+        String content = EntityUtils.toString(response.getEntity());
+        RestResponse restResponse = new RestResponse();
+        restResponse.setContent(content);
+        restResponse.setStatusCode(response.getStatusLine().getStatusCode());
+        restResponse.setHeaders(response.getAllHeaders());
+        restResponse.setCloseableHttpResponse(response);
+        restResponse.setProtocolVersion(response.getStatusLine().getProtocolVersion());
+        return restResponse;
+
+
+    }
+
     /**
      * Invoke rest API endpoint having PUT method
      * @param request
@@ -113,13 +139,9 @@ private CloseableHttpClient initializeHttpClient(){
         CloseableHttpResponse response = getClient().execute(httpPut);
         checkResponseCode(response);
 
-        String content = EntityUtils.toString(response.getEntity());
-
         /*Construct RestResponse*/
-        restResponse.setContent(content);
-        restResponse.setStatusCode(response.getStatusLine().getStatusCode());
-        response.setHeaders(response.getAllHeaders());
-        restResponse.setCloseableHttpResponse(response);
+        restResponse =  generateRestResponse(response);
+        this.getClient().close();
 
         return restResponse;
     }
@@ -132,9 +154,8 @@ private CloseableHttpClient initializeHttpClient(){
      * @return
      * @throws Exception
      */
-    public RestRequest post(RestRequest request) throws Exception {
+    public RestResponse post(RestRequest request) throws Exception {
 
-        RestResponse restResponse = new RestResponse();
         /*initialize POST client*/
         HttpPost httpPost = new HttpPost(new URI(concatenatePath(this.baseUrl,request.resource)));
         addContentType(httpPost,request.dataFormat);
@@ -146,15 +167,19 @@ private CloseableHttpClient initializeHttpClient(){
         /*Execute post*/
         CloseableHttpResponse response = getClient().execute(httpPost);
         checkResponseCode(response);
-        String responceContent = EntityUtils.toString(response.getEntity());
 
         /*Construct RestResponse*/
-        restResponse.setContent(responceContent);
-        restResponse.setStatusCode(response.getStatusLine().getStatusCode());
-        restResponse.setHeaders(response.getAllHeaders());
-        restResponse.setCloseableHttpResponse(response);
+        RestResponse restResponse  =  generateRestResponse(response);
 
-        return null;
+        this.getClient().close();
+        return restResponse;
+    }
+
+    public RestResponse get(String resource) throws Exception {
+        RestRequest request = new RestRequest();
+        request.setResource(resource);
+        return get(request);
+
     }
 
 
@@ -167,27 +192,20 @@ private CloseableHttpClient initializeHttpClient(){
     public RestResponse get(RestRequest request) throws Exception {
 
         HttpGet httpGet = new HttpGet(new URI(concatenatePath(this.baseUrl,request.resource)));
-
-        RestResponse restResponse = new RestResponse();
         addHeaderForGet(request,httpGet);
 
         CloseableHttpResponse httpResponse = null;
-        httpResponse = getClient().execute(httpGet);
-        HttpEntity httpEntity = httpResponse.getEntity();
-
-        String responseText = "";
-
-        /* process response */
-        int statusCode= httpResponse.getStatusLine().getStatusCode();
+        try{
+            httpResponse = getClient().execute(httpGet);
+        }catch (IllegalStateException e){
+            throw new IllegalAccessException("Create a new RestClient instance to proceed with next api call. Client is disposed after every api call");
+        }
 
         checkResponseCode(httpResponse);
 
-        /*Construct rest response*/
-        responseText = EntityUtils.toString(httpEntity);
-        restResponse.setContent(responseText);
-        restResponse.setStatusCode(statusCode);
-        restResponse.setHeaders(httpResponse.getAllHeaders());
-
+        /*Construct RestResponse*/
+        RestResponse restResponse  =  generateRestResponse(httpResponse);
+        this.getClient().close();
         return  restResponse;
 }
 
@@ -207,7 +225,7 @@ private CloseableHttpClient initializeHttpClient(){
      */
     private String concatenatePath(String path, String segment) {
         if (path == null || path.isEmpty()) {
-            return "/" + segment;
+            return "" + segment;
         }
         if (segment == null || segment.isEmpty()) {
             return path;
@@ -228,6 +246,9 @@ private CloseableHttpClient initializeHttpClient(){
     }
 
     public static void main(String[] args) throws Exception {
+        RestResponse r =  new RestClient().get("https://localhost:44353/api/values");
+        System.out.println(r.getContent());
+
         RestRequest request= new RestRequest();
         request
                 //.addHeader("","")
@@ -244,7 +265,7 @@ private CloseableHttpClient initializeHttpClient(){
                 .addHeader("version","v1");
 
 
-
+        //
 
         RestResponse restResponse = new RestClient("https://localhost:44353/api")
                 .get(request1);
@@ -256,7 +277,12 @@ private CloseableHttpClient initializeHttpClient(){
        System.out.println(restResponse.getContent());
         System.out.println(restResponse.getStatusCode());
 
+
+
+
     }
+
+
 
 
 
