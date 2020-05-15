@@ -228,22 +228,22 @@ private CloseableHttpClient initializeHttpClient(){
     }
 
     public static void main(String[] args) throws Exception {
-//        RestRequest request= new RestRequest();
-//        request.addBody("{\"name\": \"anoop\",\"age\": \"a34\"}",DataFormat.JSON);
-//        request.headers.put("clientid","hello");
-//        request.headers.put("baseid","amazing");
-//        request.resource="values";
-//        RestClient client=   new RestClient("https://localhost:44353/api");
-//        client .invokePost(request);
-
-
         RestRequest request= new RestRequest();
-        request.resource = "/values";
-        request.headers.put("anoopsimon","anoopsimon");
-        request.headers.put("version","2.0");
+        request.addBody("{\"name\": \"anoop\",\"age\": \"a34\"}",DataFormat.JSON);
+        request.headers.put("clientid","hello");
+        request.headers.put("baseid","amazing");
+        request.resource="values";
+        RestClient client=   new RestClient("https://localhost:44353/api");
+        client .post(request);
+
+
+        RestRequest request1= new RestRequest();
+        request1.resource = "/values";
+        request1.headers.put("anoopsimon","anoopsimon");
+        request1.headers.put("version","2.0");
 
         RestResponse restResponse = new RestClient("https://localhost:44353/api")
-                .get(request);
+                .get(request1);
         for (Header header: restResponse.getHeaders()) {
             System.out.println(header.getName() );
             System.out.println(header.getValue() );
