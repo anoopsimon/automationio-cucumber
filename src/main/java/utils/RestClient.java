@@ -225,7 +225,7 @@ private CloseableHttpClient initializeHttpClient(){
      */
     private String concatenatePath(String path, String segment) {
         if (path == null || path.isEmpty()) {
-            return "" + segment;
+            return segment;
         }
         if (segment == null || segment.isEmpty()) {
             return path;
