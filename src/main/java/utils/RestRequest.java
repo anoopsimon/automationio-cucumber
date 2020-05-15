@@ -10,9 +10,11 @@ public class RestRequest
         return body;
     }
 
-    public void addBody(String body,DataFormat dataFormat) {
+    public RestRequest addBody(String body,DataFormat dataFormat) {
         this.body = body;
         this.dataFormat=dataFormat;
+
+        return this;
     }
 
     private String body;
@@ -26,16 +28,24 @@ public class RestRequest
         return resource;
     }
 
-    public void setResource(String resource) {
+    public RestRequest setResource(String resource) {
         this.resource = resource;
+        return this;
     }
 
     public HashMap<String, String> getHeaders() {
         return headers;
     }
 
-    public void setHeaders(HashMap<String, String> headers) {
+    public RestRequest addHeaders(HashMap<String, String> headers) {
         this.headers = headers;
+        return this;
+    }
+
+    public RestRequest addHeader(String header , String value) {
+        if(header==null || header.isEmpty()) return this;
+        this.headers.put(header,value);
+        return this;
     }
 
     HashMap<String,String> headers;
