@@ -1,6 +1,7 @@
 package utils;
 
 import org.apache.http.Header;
+import org.apache.http.client.methods.CloseableHttpResponse;
 
 import java.util.HashMap;
 
@@ -8,11 +9,21 @@ public class RestResponse
 {
     private String content;
 
+    public CloseableHttpResponse getCloseableHttpResponse() {
+        return closeableHttpResponse;
+    }
+
+    public void setCloseableHttpResponse(CloseableHttpResponse closeableHttpResponse) {
+        this.closeableHttpResponse = closeableHttpResponse;
+    }
+
+    private CloseableHttpResponse closeableHttpResponse;
+
     public Header[] getHeaders() {
         return header;
     }
 
-    public void setHeader(Header[] header) {
+    public void setHeaders(Header[] header) {
         this.header = header;
     }
 
