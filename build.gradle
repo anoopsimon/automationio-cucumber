@@ -15,7 +15,9 @@ dependencies {
     testImplementation 'io.cucumber:cucumber-java:' + cucumberVersion
     testImplementation 'io.cucumber:cucumber-junit:' + cucumberVersion
     compile group: 'io.cucumber', name: 'cucumber-jvm', version: '5.6.0', ext: 'pom'
-    compile fileTree(dir:'lib',include:'*.jar')
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.12'
+
+    //  compile fileTree(dir:'lib',include:'*.jar')
 }
 configurations {
     cucumberRuntime {
