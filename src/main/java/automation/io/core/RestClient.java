@@ -94,7 +94,7 @@ private CloseableHttpClient initializeHttpClient(){
         switch (dataFormat)
         {
             case XML:
-                throw new ExecutionControl.NotImplementedException("POST with XML is not implemented");
+                throw new Exception("POST with XML is not implemented");
             case JSON:
                 httpPost.setHeader("Accept", "application/json");
                 httpPost.setHeader("Content-type", "application/json");
