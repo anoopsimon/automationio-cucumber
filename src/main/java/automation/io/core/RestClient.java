@@ -1,7 +1,5 @@
 package automation.io.core;
 
-
-import jdk.jshell.spi.ExecutionControl;
 import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
