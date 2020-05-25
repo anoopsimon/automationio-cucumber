@@ -90,7 +90,7 @@ private CloseableHttpClient initializeHttpClient(){
         }
     }
 
-    private void addContentType(HttpPost httpPost,DataFormat dataFormat) throws ExecutionControl.NotImplementedException {
+    private void addContentType(HttpPost httpPost,DataFormat dataFormat) throws Exception {
         switch (dataFormat)
         {
             case XML:
