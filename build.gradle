@@ -3,21 +3,13 @@ apply plugin: 'java'
 project.ext {
     cucumberVersion = '5.6.0'
 }
-buildscript {
-    repositories {
-        flatDir dirs: 'lib'
-    }
-    dependencies {
-        classpath ':proguard'
-    }
-}
+
 dependencies {
     testImplementation 'io.cucumber:cucumber-java:' + cucumberVersion
     testImplementation 'io.cucumber:cucumber-junit:' + cucumberVersion
-    compile group: 'io.cucumber', name: 'cucumber-jvm', version: '5.6.0', ext: 'pom'
+    compile group: 'io.cucumber', name: 'cucumber-jvm', version: cucumberVersion, ext: 'pom'
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.12'
 
-    //  compile fileTree(dir:'lib',include:'*.jar')
 }
 configurations {
     cucumberRuntime {
@@ -33,7 +25,7 @@ task cucumber() {
             classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
             args = [
                     '--plugin','io.cucumber.skeleton.CucumberTestReporter:./build/cucumber/report',
-                    '--glue', 'io.cucumber.skeleton', 'src/test/resources',
+                    '--glue', 'com.automationio.stepdefinitions', 'src/test/resources',
                     '--threads','1'
             ]
         }
