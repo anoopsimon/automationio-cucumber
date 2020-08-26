@@ -5,16 +5,22 @@ project.ext {
 }
 
 dependencies {
+    compile group: 'com.aventstack', name: 'extentreports-cucumber4-adapter', version: '1.2.1'
     compile  'io.cucumber:cucumber-java:' + cucumberVersion
     compile 'io.cucumber:cucumber-junit:' + cucumberVersion
     compile group: 'io.cucumber', name: 'cucumber-jvm', version: cucumberVersion, ext: 'pom'
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.12'
 
-}
+    }
+
+
+
 configurations {
     cucumberRuntime {
         extendsFrom testImplementation
     }
+
+
 }
 
 task cucumber() {
