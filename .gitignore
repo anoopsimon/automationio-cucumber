@@ -10,3 +10,5 @@
 .project
 .settings
 *.versionsBackup
+/.mvn/
+gradle/
