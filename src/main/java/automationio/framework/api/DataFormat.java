@@ -1,4 +1,4 @@
-package automation.io.core;
+package automationio.framework.api;
 
 public enum DataFormat {
     JSON,

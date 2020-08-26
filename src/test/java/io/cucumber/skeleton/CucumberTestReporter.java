@@ -1,6 +1,5 @@
 package io.cucumber.skeleton;
 
-//import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.*;
 

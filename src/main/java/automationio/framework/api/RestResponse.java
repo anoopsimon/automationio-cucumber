@@ -1,4 +1,4 @@
-package automation.io.core;
+package automationio.framework.api;
 
 import org.apache.http.Header;
 import org.apache.http.ProtocolVersion;
