@@ -3,10 +3,7 @@ import automationio.framework.ui.IWebDriverManager;
 import automationio.framework.ui.LocalWebDriver;
 import automationio.framework.ui.ShadowWrapper;
 import io.cucumber.java.en.Given;
-import io.github.sukgu.Shadow;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 public class LoginStep
 {
@@ -25,13 +22,10 @@ public class LoginStep
         getCommands().waitForPageLoaded();
         getCommands().type("#loanOptions-loanAmount","5000");
 
-        String locator= "div[data-component-id='FieldWrapper']";
-        String labelTag= "label";
-        String lookupText ="How often would you like to make repayments?";
-        String answerTag = "label";
-        String answer = "Weekly";
 
-        getCommands().click("//legend[text()=' repayments?']//parent::fieldset//label[text()='Weekly']");
+
+        String locator="//legend[text()='?']//parent::fieldset//label[text()='Weekly']";
+        getCommands().click(locator);
     }
 
 }
